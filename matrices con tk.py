@@ -3,24 +3,25 @@ import numpy as np
 
 
 def validar_input(texto):
-    return texto.replace('.', '', 1).replace('-', '', 1).isdigit() or texto == ''
+    if texto == '' or texto == '-':
+        return True
+    if texto.startswith('-'):
+        return texto[1:].replace('.', '', 1).isdigit()
+    return texto.replace('.', '', 1).isdigit()
+
+
 
 
 def es_incompatible(matrix):
     for row in matrix:
-        
         if all([elem == 0 for elem in row[:-1]]) and row[-1] != 0:
             return True
-        
-        for other_row in matrix:
-            if np.allclose(row[:-1], other_row[:-1]) and not np.isclose(row[-1], other_row[-1]):
-                return True
     return False
 
 
 def es_indeterminado(matrix):
     for row in matrix:
-        if all([elem == 0 for elem in row[:-1]]) and row[-1 == 0]:
+        if all([elem == 0 for elem in row[:-1]]) and row[-1] == 0:  
             return True
     return False
 
@@ -33,13 +34,18 @@ def gauss_jordan(matrix):
                 if matrix[k][i] != 0:
                     matrix[[i, k]] = matrix[[k, i]]
                     break
+            else:
+                # Si no se encontró ninguna fila para intercambiar
+                continue  # Pasar a la siguiente fila
 
+        # Realizar la normalización de la fila
         matrix[i] = matrix[i] / matrix[i][i]
         for j in range(n):
             if i != j:
                 matrix[j] = matrix[j] - matrix[i] * matrix[j][i]
 
     return matrix
+
 
 
 def calcular_matriz_3x3():
@@ -52,7 +58,9 @@ def calcular_matriz_3x3():
                            [a2, b2, c2, d2],
                            [a3, b3, c3, d3]])
 
-        # Comprobación de compatibilidad
+        print("Matriz ingresada:")
+        print(matrix)
+
         if es_incompatible(matrix):
             resultado_var.set("Sistema Incompatible: No tiene solución.")
             return
@@ -62,13 +70,11 @@ def calcular_matriz_3x3():
 
         resultado = gauss_jordan(matrix)
 
-        # Mostrar el resultado para sistemas compatibles determinados
         x, y, z = resultado[0][3], resultado[1][3], resultado[2][3]
         resultado_var.set(f"Sistema Compatible Determinado:\n x = {x:.2f}\n y = {y:.2f}\n z = {z:.2f}")
 
     except ValueError:
         resultado_var.set("Error: Por favor ingresa valores válidos.")
-
 
 
 def limpiar_campos():
@@ -84,7 +90,7 @@ def limpiar_campos():
     entry_b3.delete(0, tk.END)
     entry_c3.delete(0, tk.END)
     entry_d3.delete(0, tk.END)
-    resultado_var.set("")  # Limpia el resultado al borrar campos
+    resultado_var.set("") 
 
 
 def matrices_3x3():
@@ -94,7 +100,6 @@ def matrices_3x3():
 
     vcmd = root.register(validar_input)
 
-    # Configura las entradas para cada ecuación
     tk.Label(frame_matrices, text="Ecuación 1:", font=("Arial", 16), bg="#1E3A60", fg="white").grid(row=0, column=0, sticky="nsew")
     entry_a1 = tk.Entry(frame_matrices, validate='key', validatecommand=(vcmd, '%P'), font=("Arial", 14))
     entry_a1.grid(row=0, column=1)
@@ -134,13 +139,11 @@ def matrices_3x3():
     entry_d3 = tk.Entry(frame_matrices, validate='key', validatecommand=(vcmd, '%P'), font=("Arial", 14))
     entry_d3.grid(row=2, column=4)
 
-    # Encabezados de columnas
     tk.Label(frame_matrices, text="x", font=("Arial", 16), bg="#1E3A60", fg="white").grid(row=3, column=1, sticky="nsew")
     tk.Label(frame_matrices, text="y", font=("Arial", 16), bg="#1E3A60", fg="white").grid(row=3, column=2, sticky="nsew")
     tk.Label(frame_matrices, text="z", font=("Arial", 16), bg="#1E3A60", fg="white").grid(row=3, column=3, sticky="nsew")
     tk.Label(frame_matrices, text="Igualdad", font=("Arial", 16), bg="#1E3A60", fg="white").grid(row=3, column=4, sticky="nsew")
 
-    # Recuadro para mostrar el resultado
     global resultado_var
     resultado_var = tk.StringVar()
     resultado_frame = tk.Frame(frame_matrices, bg="white", bd=2, relief="groove")
@@ -152,7 +155,6 @@ def matrices_3x3():
     tk.Button(frame_matrices, text="Calcular", command=calcular_matriz_3x3, font=("Arial", 14)).grid(row=5, column=0, columnspan=3)
     tk.Button(frame_matrices, text="Borrar", command=limpiar_campos, bg="red", fg="white", font=("Arial", 14)).grid(row=5, column=3, columnspan=2)
 
-    # Explicación sobre NaN, inf y -inf
     explicacion = (
         "NaN: No es un número.\n"
         "inf: Infinito, ocurre cuando el resultado supera el límite.\n"
@@ -160,7 +162,6 @@ def matrices_3x3():
     )
     tk.Label(frame_matrices, text=explicacion, justify=tk.LEFT, bg="#1E3A60", fg="white", font=("Arial", 14)).grid(row=6, column=0, columnspan=5, sticky="w", pady=10)
 
-# Configura la ventana principal
 root = tk.Tk()
 root.title("Resolución de Sistemas de Ecuaciones Lineales")
 root.geometry("1366x786")
