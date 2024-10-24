@@ -7,7 +7,6 @@ def validar_input(texto):
 
 
 def es_incompatible(matrix):
-    # Verifica si el sistema es incompatible (fila de ceros en coeficientes y distinto de cero en término independiente)
     for row in matrix:
         if all([elem == 0 for elem in row[:-1]]) and row[-1] != 0:
             return True
@@ -15,7 +14,6 @@ def es_incompatible(matrix):
 
 
 def es_indeterminado(matrix):
-    # Verifica si el sistema es compatible indeterminado (fila de ceros en coeficientes y en término independiente)
     for row in matrix:
         if all([elem == 0 for elem in row[:-1]]) and row[-1] == 0:
             return True
@@ -23,7 +21,6 @@ def es_indeterminado(matrix):
 
 
 def gauss_jordan(matrix):
-    # Método de eliminación de Gauss-Jordan para resolver el sistema
     n = len(matrix)
     for i in range(n):
         if matrix[i][i] == 0:
@@ -42,7 +39,6 @@ def gauss_jordan(matrix):
 
 def calcular_matriz_3x3():
     try:
-        # Obtención de valores ingresados por el usuario
         a1, b1, c1, d1 = float(entry_a1.get()), float(entry_b1.get()), float(entry_c1.get()), float(entry_d1.get())
         a2, b2, c2, d2 = float(entry_a2.get()), float(entry_b2.get()), float(entry_c2.get()), float(entry_d2.get())
         a3, b3, c3, d3 = float(entry_a3.get()), float(entry_b3.get()), float(entry_c3.get()), float(entry_d3.get())
@@ -59,7 +55,6 @@ def calcular_matriz_3x3():
             resultado_var.set("Sistema Compatible Indeterminado: Infinitas soluciones.")
             return
 
-        # Resolución de sistema compatible determinado
         resultado = gauss_jordan(matrix)
 
         # Mostrar el resultado para sistemas compatibles determinados
@@ -71,7 +66,6 @@ def calcular_matriz_3x3():
 
 
 def limpiar_campos():
-    # Limpia todos los campos de entrada
     entry_a1.delete(0, tk.END)
     entry_b1.delete(0, tk.END)
     entry_c1.delete(0, tk.END)
@@ -156,17 +150,18 @@ def matrices_3x3():
     explicacion = (
         "NaN: No es un número.\n"
         "inf: Infinito, ocurre cuando el resultado supera el límite.\n"
-        "-inf: Infinito negativo, similar a inf pero en sentido opuesto."
+        "-inf: Infinito negativo, ocurre con valores que tienden a negativo infinito."
     )
-    tk.Label(frame_matrices, text=explicacion, font=("Arial", 10), bg="#1E3A60", fg="white").grid(row=6, column=0, columnspan=5)
+    tk.Label(frame_matrices, text=explicacion, justify=tk.LEFT, bg="#1E3A60", fg="white", font=("Arial", 14)).grid(row=6, column=0, columnspan=5, sticky="w", pady=10)
 
-
+# Configura la ventana principal
 root = tk.Tk()
-root.title("Calculadora de Matrices 3x3")
-root.geometry("1366x765")
+root.title("Resolución de Sistemas de Ecuaciones Lineales")
+root.geometry("1366x786")
+root.configure(bg="#1E3A60")
 
 frame_matrices = tk.Frame(root, bg="#1E3A60")
-frame_matrices.pack(fill="both", expand=True, padx=20, pady=20)
+frame_matrices.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
 
 matrices_3x3()
 
