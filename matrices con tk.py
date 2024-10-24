@@ -8,14 +8,19 @@ def validar_input(texto):
 
 def es_incompatible(matrix):
     for row in matrix:
+        
         if all([elem == 0 for elem in row[:-1]]) and row[-1] != 0:
             return True
+        
+        for other_row in matrix:
+            if np.allclose(row[:-1], other_row[:-1]) and not np.isclose(row[-1], other_row[-1]):
+                return True
     return False
 
 
 def es_indeterminado(matrix):
     for row in matrix:
-        if all([elem == 0 for elem in row[:-1]]) and row[-1] == 0:
+        if all([elem == 0 for elem in row[:-1]]) and row[-1 == 0]:
             return True
     return False
 
@@ -63,6 +68,7 @@ def calcular_matriz_3x3():
 
     except ValueError:
         resultado_var.set("Error: Por favor ingresa valores válidos.")
+
 
 
 def limpiar_campos():
